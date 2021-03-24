@@ -6,8 +6,7 @@ jobs:
     build:
         name: Build
         runs-on: ubuntu-latest
-        before_install:
-            -    chmod +x mvnw
+ 
         steps:
             -   uses: actions/checkout@v2
             -   uses: actions/setup-java@v1
@@ -23,5 +22,6 @@ jobs:
             -   run: |
                     java -version
                     echo $JAVA_HOME
+            -   chmod +x mvnw        
             -   run: ./mvnw install
             -   uses: codecov/codecov-action@v1
