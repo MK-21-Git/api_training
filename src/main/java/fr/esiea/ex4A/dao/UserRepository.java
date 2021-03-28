@@ -1,6 +1,7 @@
 package fr.esiea.ex4A.dao;
 
-import fr.esiea.ex4A.model.User;
+import fr.esiea.ex4A.model.AgifyData;
+import fr.esiea.ex4A.model.UserData;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -8,24 +9,32 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
-    final List<User> users = new ArrayList<>();
+    final List<UserData> allUsers = new ArrayList<>();
 
-    public List<User> getUsers() {
-        return users;
+    public List<UserData> getUsers() {
+        return allUsers;
     }
-    public List <User> addUser(User user)
+    public List <UserData> addUser(UserData userData)
     {
-        this.users.add(user);
-        return users;
+        this.allUsers.add(userData);
+        return this.allUsers;
     }
-    public List<User> getMatchesUsers(User user)
-    {
-        List <User> result = new ArrayList<>();
-        for (User u: this.users) {
-            if (u.getUserCountry().equals(user.getUserCountry())){
-                result.add(u);
+    public List<UserData> getMatchesUsers(String name, String country, Integer age) {
+        List<UserData> result = new ArrayList<>();
+        UserData tempUserData = new UserData(null, name, null, country, null, null);
+        if (this.getUsers().size() > 0 && this.allUsers.contains(tempUserData) ) {
+            UserData userData = this.allUsers.get(this.allUsers.indexOf(tempUserData));
+            for (UserData u : this.allUsers) {
+                Integer ageU = CacheAgify.agifyBD.get(new AgifyData(u.getUserName(), null, null, u.getUserCountry()));
+                if (!userData.equals(u)
+                    && userData.getUserSexPref().equals(u.getUserSex())
+                    && userData.getUserSex().equals(u.getUserSexPref())
+                    && ageU >= age - 4 && ageU <= age + 4) {
+                    result.add(u);
+                }
             }
         }
         return result;
     }
+
 }

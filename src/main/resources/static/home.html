@@ -37,10 +37,10 @@
                 content += "    </thead>\n";
                 content += "    <tbody>\n";
 
-                response.forEach(user => {
+                response.forEach(userData => {
                     content += "      <tr>\n";
-                    content += "        <td>" + user.userName + "</th>\n";
-                    content += "        <td><a href=\"https://twitter.com/" + user.userTweeter + "\">@" + user.userTweeter + "</a></th>\n";
+                    content += "        <td>" + userData.userName + "</th>\n";
+                    content += "        <td><a href=\"https://twitter.com/" + userData.userTweeter + "\">@" + userData.userTweeter + "</a></th>\n";
                     content += "      </tr>\n";
                 });
 
