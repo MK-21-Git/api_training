@@ -33,14 +33,16 @@
                 content += "      <tr>\n";
                 content += "        <th scope=\"col\">Nom</th>\n";
                 content += "        <th scope=\"col\">Twitter</th>\n";
+                content += "        <th scope=\"col\">Age</th>\n";
                 content += "      </tr>\n";
                 content += "    </thead>\n";
                 content += "    <tbody>\n";
 
-                response.forEach(userData => {
+                response.forEach(userInfo => {
                     content += "      <tr>\n";
-                    content += "        <td>" + userData.userName + "</th>\n";
-                    content += "        <td><a href=\"https://twitter.com/" + userData.userTweeter + "\">@" + userData.userTweeter + "</a></th>\n";
+                    content += "        <td>" + userInfo.userName + "</th>\n";
+                    content += "        <td><a href=\"https://twitter.com/" + userInfo.userTweeter + "\">@" + userInfo.userTweeter + "</a></th>\n";
+                    content += "        <td>" + userInfo.userAge + "</th>\n";
                     content += "      </tr>\n";
                 });
 

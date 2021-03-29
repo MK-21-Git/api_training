@@ -2,8 +2,8 @@ package fr.esiea.ex4A.services;
 
 import fr.esiea.ex4A.agify.AgifyClient;
 import fr.esiea.ex4A.dao.AgifyRepository;
-import fr.esiea.ex4A.dao.CacheAgify;
-import fr.esiea.ex4A.model.AgifyData;
+import fr.esiea.ex4A.model.AgifyUser;
+import fr.esiea.ex4A.model.Key;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 
@@ -18,19 +18,18 @@ public class AgifyService {
         this.agifyClient = agifyClient;
         this.agifyRepository = agifyRepository;
     }
-    public AgifyData callAgify (String name, String country)
-    {
-        AgifyData resultat = null;
-        Call<AgifyData> agifyDataCall = agifyClient.getData(name,country);
+    public AgifyUser callAgify (String name, String country) {
+        AgifyUser agifyUser = null;
+        Call<AgifyUser> agifyDataCall = agifyClient.getData(name,country);
         try {
-            resultat = agifyDataCall.execute().body();
-            CacheAgify.agifyBD.put(resultat,resultat.getAge());
+            agifyUser = agifyDataCall.execute().body();
+            agifyRepository.addAgifyData(agifyUser);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return resultat;
+        return agifyUser;
     }
-    public AgifyData existAgifyData (String name, String country) {
-        return agifyRepository.countainAgifyData(name,country);
+    public AgifyUser existAgifyData (Key key) {
+        return agifyRepository.countainAgifyData(key);
     }
 }

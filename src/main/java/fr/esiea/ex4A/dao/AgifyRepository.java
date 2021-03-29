@@ -1,20 +1,21 @@
 package fr.esiea.ex4A.dao;
 
-
-import fr.esiea.ex4A.model.AgifyData;
+import fr.esiea.ex4A.model.AgifyUser;
+import fr.esiea.ex4A.model.Key;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.HashMap;
 
 @Repository
 public class AgifyRepository {
-   public AgifyData countainAgifyData (String name, String country) {
-       AgifyData agifyData = new AgifyData(name, 0,0,country);
-       List<AgifyData> agifyDataList = List.copyOf(CacheAgify.agifyBD.keySet());
-       if (agifyDataList.contains(agifyData)) {
-           return agifyDataList.get(agifyDataList.indexOf(agifyData));
-       }
-       return null;
-   }
 
+    public final HashMap<Key, AgifyUser> agifyBD = new HashMap<>();
+
+    public void addAgifyData(AgifyUser agifyUser) {
+        agifyBD.put(new Key(agifyUser.getName(), agifyUser.getCountryId()), agifyUser);
+    }
+
+    public AgifyUser countainAgifyData(Key key) {
+        return agifyBD.get(key);
+    }
 }

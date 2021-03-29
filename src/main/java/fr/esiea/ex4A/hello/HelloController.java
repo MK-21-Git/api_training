@@ -1,12 +1,15 @@
 package fr.esiea.ex4A.hello;
 
 import fr.esiea.ex4A.dao.UserRepository;
-import fr.esiea.ex4A.model.AgifyData;
-import fr.esiea.ex4A.model.UserData;
+import fr.esiea.ex4A.model.AgifyUser;
+import fr.esiea.ex4A.model.Key;
+import fr.esiea.ex4A.model.UserInfo;
+import fr.esiea.ex4A.model.UserMatch;
 import fr.esiea.ex4A.services.AgifyService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -32,25 +35,26 @@ class HelloController {
         }
         return helloData;
     }
-    @PostMapping(path="/api/inscription", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    List<UserData> inscription (@RequestBody UserData userData)
-    {
-        return this.userRepository.addUser(userData);
-    }
-    @GetMapping(path="/api/matches", produces = MediaType.APPLICATION_JSON_VALUE)
-    List<UserData>  matches(@RequestParam(name = "userName") String name, @RequestParam (name = "userCountry") String country)
-    {
-        AgifyData agifyData = agifyService.existAgifyData(name, country);
-        if ( agifyData == null ) {
-            agifyData = agifyService.callAgify(name, country);
-        }
 
-        List <UserData> result = this.userRepository.getMatchesUsers(name,country,agifyData.getAge());
-        return result;
+    @PostMapping(path="/api/inscription", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_HTML_VALUE)
+    String inscription (@RequestBody UserInfo userData) {
+        AgifyUser agifyUser = agifyService.existAgifyData(new Key(userData.getUserName(), userData.getUserCountry()));
+        if ( agifyUser == null ) {
+            agifyUser = agifyService.callAgify(userData.getUserName(), userData.getUserCountry());
+        }
+        this.userRepository.addUser(new UserInfo(agifyUser, userData.getUserSex(), userData.getUserSexPref()));
+        return "user " + userData .getUserName() + " added successfully";
     }
+
+    @GetMapping(path="/api/matches", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<UserMatch>  matches(@RequestParam(name = "userName") String name, @RequestParam (name = "userCountry") String country) {
+        return this.userRepository.getMatchesUsers(name.substring(0, 1).toUpperCase() + name.substring(1),country);
+    }
+
     @GetMapping (path = "/api/allusers")
-    List <UserData> getAllUsers (){
+    List <UserInfo> getAllUsers (){
         return this.userRepository.getUsers();
     }
+
 }
 

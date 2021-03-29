@@ -1,7 +1,7 @@
 package fr.esiea.ex4A.dao;
 
-import fr.esiea.ex4A.model.AgifyData;
-import fr.esiea.ex4A.model.UserData;
+import fr.esiea.ex4A.model.UserInfo;
+import fr.esiea.ex4A.model.UserMatch;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -9,32 +9,33 @@ import java.util.List;
 
 @Repository
 public class UserRepository {
-    final List<UserData> allUsers = new ArrayList<>();
+    final List<UserInfo> allUsers = new ArrayList<>();
 
-    public List<UserData> getUsers() {
+    public List<UserInfo> getUsers() {
         return allUsers;
     }
-    public List <UserData> addUser(UserData userData)
-    {
-        this.allUsers.add(userData);
+
+    public List<UserInfo> addUser(UserInfo userInfo) {
+        if(!this.allUsers.contains(userInfo))
+            this.allUsers.add(userInfo);
         return this.allUsers;
     }
-    public List<UserData> getMatchesUsers(String name, String country, Integer age) {
-        List<UserData> result = new ArrayList<>();
-        UserData tempUserData = new UserData(null, name, null, country, null, null);
-        if (this.getUsers().size() > 0 && this.allUsers.contains(tempUserData) ) {
-            UserData userData = this.allUsers.get(this.allUsers.indexOf(tempUserData));
-            for (UserData u : this.allUsers) {
-                Integer ageU = CacheAgify.agifyBD.get(new AgifyData(u.getUserName(), null, null, u.getUserCountry()));
-                if (!userData.equals(u)
-                    && userData.getUserSexPref().equals(u.getUserSex())
-                    && userData.getUserSex().equals(u.getUserSexPref())
-                    && ageU >= age - 4 && ageU <= age + 4) {
-                    result.add(u);
+
+    UserInfo getUserInfo(String name, String country) {
+        int index = this.allUsers.indexOf(new UserInfo(null, name, null, country, null, null, 0));
+        return index >= 0 ? this.allUsers.get(index) : null;
+    }
+
+    public List<UserMatch> getMatchesUsers(String name, String country) {
+        List<UserMatch> result = new ArrayList<>();
+        UserInfo userInfo = getUserInfo(name, country);
+        if(userInfo != null) {
+            for (UserInfo u : this.allUsers) {
+                if (userInfo.isMatch(u)) {
+                    result.add(u.asMatch());
                 }
             }
         }
         return result;
     }
-
 }
