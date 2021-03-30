@@ -40,8 +40,8 @@
 
                 response.forEach(userInfo => {
                     content += "      <tr>\n";
-                    content += "        <td>" + userInfo.userName + "</th>\n";
-                    content += "        <td><a href=\"https://twitter.com/" + userInfo.userTweeter + "\">@" + userInfo.userTweeter + "</a></th>\n";
+                    content += "        <td>" + userInfo.name + "</th>\n";
+                    content += "        <td><a href=\"https://twitter.com/" + userInfo.twitter + "\">@" + userInfo.twitter + "</a></th>\n";
                     content += "        <td>" + userInfo.userAge + "</th>\n";
                     content += "      </tr>\n";
                 });

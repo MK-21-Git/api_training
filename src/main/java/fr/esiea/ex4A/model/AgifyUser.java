@@ -25,11 +25,6 @@ public class AgifyUser {
     public Integer getAge() {
         return age;
     }
-
-    public Integer getCount() {
-        return count;
-    }
-
     public String getCountryId() {
         return countryId;
     }
@@ -42,8 +37,4 @@ public class AgifyUser {
         return name.equals(agifyUser.name) && countryId.equals(agifyUser.countryId);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, countryId);
-    }
 }

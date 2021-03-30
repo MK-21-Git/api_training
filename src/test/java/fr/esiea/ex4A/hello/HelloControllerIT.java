@@ -2,7 +2,11 @@ package fr.esiea.ex4A.hello;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.esiea.ex4A.dao.UserRepository;
+import fr.esiea.ex4A.model.AgifyUser;
+import fr.esiea.ex4A.model.Key;
 import fr.esiea.ex4A.model.UserInfo;
+import fr.esiea.ex4A.model.UserMatch;
+import fr.esiea.ex4A.services.AgifyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -16,6 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.startsWith;
@@ -36,6 +41,9 @@ class HelloControllerIT {
     @MockBean
     private UserRepository userRepository;
 
+    @MockBean
+    private AgifyService agifyService;
+
     HelloControllerIT(@Autowired MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
@@ -43,8 +51,9 @@ class HelloControllerIT {
     @Test
     void inscription_delegates_to_repository_when_name_param_is_present() throws Exception {
         assertThat(userRepository).isNotNull();
-
-        when(userRepository.getMatchesUsers(any(), any())).thenReturn(new ArrayList<>());
+        //user n'existe pas en cache
+        when(agifyService.existAgifyUser(new Key("Marie", "FR"))).thenReturn(null);
+        when(agifyService.callAgify("Marie", "FR")).thenReturn(new AgifyUser("Marie", 64, 787, "FR"));
 
         mockMvc
             .perform(MockMvcRequestBuilders
@@ -70,15 +79,17 @@ class HelloControllerIT {
     @Test
     void matches_delegates_to_repository_when_params_is_present() throws Exception {
         assertThat(userRepository).isNotNull();
-
-        when(userRepository.getMatchesUsers(any(), any())).thenReturn(new ArrayList<>());
+        when(userRepository.getMatchesUsers("Marie", "FR")).thenReturn(
+            List.of(
+                new UserMatch("Philippe", "Philippe", 66),
+                new UserMatch("Patrick", "Patrick", 61)));
 
         mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/matches?userName=toto&userCountry=FR"))
+            .perform(MockMvcRequestBuilders.get("/api/matches?userName=Marie&userCountry=FR"))
             .andExpect(status().isOk())
-            .andExpect(content().string("[]"));
-
-        //verify(userRepository).getMatchesUsers("toto", "FR");
+            .andExpect(jsonPath("$.size()").value(2))
+            .andExpect(jsonPath("$[0].userName").value("Philippe"))
+            .andExpect(jsonPath("$[0].userAge").value("66"));
 
     }
 

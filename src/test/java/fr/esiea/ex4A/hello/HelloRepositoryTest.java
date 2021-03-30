@@ -3,9 +3,11 @@ package fr.esiea.ex4A.hello;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class HelloRepositoryTest {
 
     private final HelloRepository helloRepository = new HelloRepository();
@@ -13,7 +15,6 @@ class HelloRepositoryTest {
     @Test
     void randomHello_returns_an_hello_based_on_internal_list() {
         HelloData helloData = helloRepository.randomHello();
-
         assertThat(helloData.name).isIn(helloRepository.names);
         assertThat(helloData.type).isEqualTo("hello");
         assertThat(helloData.completeSentence).startsWith("hello ").endsWith("!");

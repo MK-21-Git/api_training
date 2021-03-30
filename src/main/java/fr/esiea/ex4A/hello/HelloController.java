@@ -37,23 +37,18 @@ class HelloController {
     }
 
     @PostMapping(path="/api/inscription", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_HTML_VALUE)
-    String inscription (@RequestBody UserInfo userData) {
-        AgifyUser agifyUser = agifyService.existAgifyData(new Key(userData.getUserName(), userData.getUserCountry()));
+    String inscription (@RequestBody UserInfo userInfo) {
+        AgifyUser agifyUser = agifyService.existAgifyUser(new Key(userInfo.getUserName(), userInfo.getUserCountry()));
         if ( agifyUser == null ) {
-            agifyUser = agifyService.callAgify(userData.getUserName(), userData.getUserCountry());
+            agifyUser = agifyService.callAgify(userInfo.getUserName(), userInfo.getUserCountry());
         }
-        this.userRepository.addUser(new UserInfo(agifyUser, userData.getUserSex(), userData.getUserSexPref()));
-        return "user " + userData .getUserName() + " added successfully";
+        this.userRepository.addUser(new UserInfo(agifyUser, userInfo.getUserSex(), userInfo.getUserSexPref()));
+        return "user " + userInfo .getUserName() + " added successfully";
     }
 
     @GetMapping(path="/api/matches", produces = MediaType.APPLICATION_JSON_VALUE)
     List<UserMatch>  matches(@RequestParam(name = "userName") String name, @RequestParam (name = "userCountry") String country) {
         return this.userRepository.getMatchesUsers(name.substring(0, 1).toUpperCase() + name.substring(1),country);
-    }
-
-    @GetMapping (path = "/api/allusers")
-    List <UserInfo> getAllUsers (){
-        return this.userRepository.getUsers();
     }
 
 }
