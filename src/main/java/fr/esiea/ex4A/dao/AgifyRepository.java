@@ -9,6 +9,7 @@ import retrofit2.Response;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 
 @Repository
 public class AgifyRepository {
@@ -23,7 +24,7 @@ public class AgifyRepository {
         agifyBD.put(new Key(agifyUser.getName(), agifyUser.getCountryId()), agifyUser);
     }
     public AgifyUser callAgify (String name, String country) throws IOException {
-        Call<AgifyUser> agifyDataCall = agifyClient.getData(name,country);
+        Call<AgifyUser> agifyDataCall = agifyClient.getData(name.toLowerCase(Locale.ROOT),country);
         Response<AgifyUser> response = agifyDataCall.execute();
         AgifyUser agifyUser = response.body();
         addAgifyUser(agifyUser);
