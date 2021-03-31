@@ -76,7 +76,7 @@ class HelloControllerIT {
 
     }
 
-    /*@Test
+    @Test
     void matches_delegates_to_repository_when_params_is_present() throws Exception {
         assertThat(userRepository).isNotNull();
         when(userRepository.getMatchesUsers("Marie", "FR")).thenReturn(
@@ -88,10 +88,10 @@ class HelloControllerIT {
             .perform(MockMvcRequestBuilders.get("/api/matches?userName=Marie&userCountry=FR"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.size()").value(2))
-            .andExpect(jsonPath("$[0].userName").value("Philippe"))
+            .andExpect(jsonPath("$[0].name").value("Philippe"))
             .andExpect(jsonPath("$[0].userAge").value("66"));
 
-    }*/
+    }
 
     @Test
     void hello_delegates_to_repository_when_name_param_is_present() throws Exception {
