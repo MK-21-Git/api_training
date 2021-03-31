@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @RestController
 class HelloController {
@@ -38,7 +39,7 @@ class HelloController {
 
     @PostMapping(path="/api/inscription", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.TEXT_HTML_VALUE)
     String inscription (@RequestBody UserInfo userInfo) {
-        AgifyUser agifyUser = agifyService.existAgifyUser(new Key(userInfo.getUserName(), userInfo.getUserCountry()));
+        AgifyUser agifyUser = agifyService.existAgifyUser(new Key(userInfo.getUserName().toLowerCase(Locale.ROOT), userInfo.getUserCountry()));
         if ( agifyUser == null ) {
             agifyUser = agifyService.callAgify(userInfo.getUserName(), userInfo.getUserCountry());
         }
